@@ -2,8 +2,9 @@ import React from 'react';
 import {  Card, Image } from 'semantic-ui-react'
 // import ModalGen from './ModalGen'
 import { Modal, Button } from 'react-materialize'
-const NoteCard = ({handleDragLeave, renderModal, modalState, handleOpen, modalOpen, handleClose, note, users}) => {
 
+
+const NoteCard = ({handleDragLeave, currentClassroom, note, users}) => {
 
 const foundUser = users.find(user=>{
   return user.id === note.user_id
@@ -25,12 +26,12 @@ return (
      header='Modal Header'
      fixedFooter
      trigger={<Button className='green'>View Note</Button>}>
-     <p onDragLeave={handleDragLeave} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+     <p onDragLeave={handleDragLeave} >{note.content}</p>
      </Modal>
      </Card.Content>
    </Card>
    );
  }
- 
+
 
 export default NoteCard;

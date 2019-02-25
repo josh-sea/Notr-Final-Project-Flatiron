@@ -8,31 +8,30 @@ const uuidv4 = require('uuid/v4')
 
 const Classrooms = ({notes, classrooms, click}) => {
 
-const rootPanel = classrooms.map(classroom=>{
-
+  const rootPanel = classrooms.map(classroom=>{
   const filteredNotes = notes.filter(note=>{
     return classroom.id === note.classroom_id
-  })//filter notes for the classroom
-
+  })
+//filter notes for the classroom
   const notePanels = filteredNotes.map(note=>{
-    return {key: uuidv4(), title: note.title, content: {content: <Button onClick={click} >Edit Note</Button>} }
-  })//create array of objects for the note dropdowns
-
+    return {key: uuidv4(), title: note.title, content: {content: <Button data-id={note.id} onClick={click} >Edit Note</Button>} }
+  })
+//create array of objects for the note dropdowns
   const level1Content = (
     <div>
-      {classroom.name}
-      <Accordion.Accordion panels={notePanels} />
+     Lecture Notes
+     <Accordion.Accordion panels={notePanels} />
     </div>
-  )// put the notePanel array into an Accordion menu
-
+  )
+// put the notePanel array into an Accordion menu
   return { key: uuidv4(), title: classroom.name, content: { content: level1Content } }
-  //create a root panel for for each classroomname and return the object to map root panel
-})//end classroom classpanel loop
-
+//create a root panel for for each classroomname and return the object to map root panel
+  })
+//end classroom classpanel loop
 //get uniqs only
-const uniqRootPanel = rootPanel.filter((obj, index, self) =>{
-  return self.indexOf(obj) === index;
-})
+  const uniqRootPanel = rootPanel.filter((obj, index, self) =>{
+    return self.indexOf(obj) === index;
+  })
 
   return (
     <div style={{height: '80vh', overflow: 'scroll', padding: '3px',margin: '2px'}}>

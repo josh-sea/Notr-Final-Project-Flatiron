@@ -1,18 +1,24 @@
 import React from 'react';
 import NoteCard from '../Components/NoteCard'
 import { Card } from 'semantic-ui-react'
-
+import { Animated } from 'react-animated-css'
 const uuidv4 = require('uuid/v4')
 
-const LiveNotes = ({handleOpen, renderModal, users, notes, modalState, modalOpen, handleDragLeave, handleDrag, handleClose}) => {
+const LiveNotes = ({users, notes, currentClassroom, handleDragLeave}) => {
 
-const renderNotes = notes.map(note=>{
-  return   <NoteCard key={uuidv4()} modalState={modalState} renderModal={renderModal} users={users} handleOpen={handleOpen} note={note} handleDragLeave={handleDragLeave} modalOpen={modalOpen} handleClose={handleClose}/>
+const classNotes = notes.filter(note=>{
+  return note.classroom_id === currentClassroom.id
+})
+const renderNotes = classNotes.map(note=>{
+  return   <NoteCard key={uuidv4()} users={users} note={note} currentClassroom={currentClassroom} handleDragLeave={handleDragLeave}/>
 })//end of note map
+
   return (
-    <Card.Group style={{height: '80vh', overflow: 'scroll'}}>
-    {renderNotes}
-    </Card.Group>
+    <Animated animationIn="rotateInDownRight" animationOut="flipOutY" isVisible={true}>
+      <Card.Group style={{height: '80vh', overflow: 'scroll'}}>
+      {renderNotes}
+      </Card.Group>
+    </Animated>
 );
 }
 // <NoteCard handleOpen={handleOpen} notes={notes} handleDragLeave={handleDragLeave} modalOpen={modalOpen} handleClose={handleClose}/>
