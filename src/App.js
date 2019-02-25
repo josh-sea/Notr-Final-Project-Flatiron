@@ -102,12 +102,12 @@ class App extends Component {
       handleMenuClick = (e, data) =>{
 //##################################################################
 //handling new note selection
-        e.target.id === 'new-note' && this.setState({newClassroomFormBool: false, title: '', editView: true, noteStatus: false, text: '', currentNote: false, currentClassroom: {}, noteSize: 9, selectedClassroom: false})
+        e.target.id === 'new-note' && this.setState({newClassroomFormBool: false, title: '', editView: true, noteStatus: false, text: '', currentNote: false, currentClassroom: {}, noteSize: 9, selectedClassroom: {id: ''}})
 //##################################################################
 //handling new classroom selection
         e.target.id === 'new-classroom' && this.setState({newClassroomFormBool: true, editView: false, noteStatus: false, text: '', currentNote: false, currentClassroom: {}})
 //##################################################################
-//handling lgging out
+//handling logging out
         e.target.id === 'logout' && this.setState({
           text: '',
           currentUser: {},
@@ -199,8 +199,9 @@ class App extends Component {
       const newAllN = [...this.state.notes]
       newAllN.splice(allNoteIndex,1)
 
-      const newUserN = [...this.state.notes]
+      const newUserN = [...this.state.userNotes]
       newUserN.splice(userNoteIndex,1)
+
         this.setState({
           notes: newAllN,
           userNotes: newUserN,
@@ -213,9 +214,10 @@ class App extends Component {
           editView: false,
           newClassroomFormBool: false,
           title: '',
-          classroomNames: [],
           selectedClassroom: {},
         })
+        console.log(this.state.classrooms);
+        console.log(this.state.userClassrooms);
       })
 //##################################################################
 // handling new classroom functionality
@@ -245,19 +247,39 @@ class App extends Component {
       })
         .then(r=>r.json())
         .then(r=>{
+          r.success &&
           this.setState({authenticated: r.success, currentUser: r.user, userClassrooms: r.classrooms, userNotes: r.notes},()=>{
             const classroomNames = this.state.userClassrooms.map(classroom=>{
               return { key: classroom.id, value: classroom.id, text: classroom.name }
             })
             this.setState({classroomNames})
             localStorage.setItem('currentUserID', this.state.currentUser.id);
-            // const classroomNames = this.state.classrooms.filter(classroom=>{
-            //   return
             })
           })
-        } else {
-
-          alert('Register');
+        } else if (this.state.activeMenuLogIn==='Register'){
+          fetch("http://localhost:9000/api/v1/register", {
+            method: 'POST',
+            headers:
+            {
+              "Content-Type": 'application/json',
+              "Accept": 'application/json'
+            },
+            body: JSON.stringify({
+              username: this.state.username
+          })
+        })
+          .then(r=>r.json())
+          .then(r=>{
+            r.success &&
+            this.setState({authenticated: r.success, currentUser: r.user, userClassrooms: r.classrooms, userNotes: r.notes},()=>{
+              const classroomNames = this.state.userClassrooms.map(classroom=>{
+                return { key: classroom.id, value: classroom.id, text: classroom.name }
+              })
+              this.setState({classroomNames})
+              localStorage.setItem('currentUserID', this.state.currentUser.id);
+              })
+            })
+          alert('Registered');
         }
       }
 

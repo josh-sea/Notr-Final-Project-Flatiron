@@ -18,7 +18,7 @@ return (
        <Card.Header>{note.title}</Card.Header>
        <Card.Meta>{foundUser.username}</Card.Meta>
        <Card.Description>
-        {`${note.content.slice(0,140)}...`}
+        {note.updated_at}
        </Card.Description>
      </Card.Content>
      <Card.Content extra style={{display: 'flex', justifyContent: 'center'}}>

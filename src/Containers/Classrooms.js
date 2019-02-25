@@ -1,6 +1,6 @@
 import React from 'react';
 // import Classroom from '../Components/Classroom'
-import { Accordion, Button } from 'semantic-ui-react'
+import { Accordion, Button, Segment } from 'semantic-ui-react'
 
 
 const uuidv4 = require('uuid/v4')
@@ -18,10 +18,10 @@ const Classrooms = ({notes, classrooms, click}) => {
   })
 //create array of objects for the note dropdowns
   const level1Content = (
-    <div>
+    <Segment>
      Lecture Notes
      <Accordion.Accordion panels={notePanels} />
-    </div>
+    </Segment>
   )
 // put the notePanel array into an Accordion menu
   return { key: uuidv4(), title: classroom.name, content: { content: level1Content } }
@@ -34,9 +34,9 @@ const Classrooms = ({notes, classrooms, click}) => {
   })
 
   return (
-    <div style={{height: '80vh', overflow: 'scroll', padding: '3px',margin: '2px'}}>
-  <Accordion panels={uniqRootPanel} styled />
-  </div>
+    <Segment style={{height: '80vh', overflow: 'scroll', padding: '3px',margin: '2px'}}>
+      <Accordion panels={uniqRootPanel} styled />
+    </Segment>
   )
 }
 export default Classrooms;

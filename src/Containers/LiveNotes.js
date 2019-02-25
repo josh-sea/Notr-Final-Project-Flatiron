@@ -15,7 +15,7 @@ const renderNotes = classNotes.map(note=>{
 
   return (
     <Animated animationIn="rotateInDownRight" animationOut="flipOutY" isVisible={true}>
-      <Card.Group style={{height: '80vh', overflow: 'scroll'}}>
+      <Card.Group style={{height: '80vh', overflow: 'scroll', display: 'flex',  justifyContent:'center', alignItems:'top'}}>
       {renderNotes}
       </Card.Group>
     </Animated>

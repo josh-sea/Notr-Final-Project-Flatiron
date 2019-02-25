@@ -2,7 +2,7 @@ import React from 'react';
 import ReactQuill from 'react-quill';
 // import lifecycle from 'react-pure-lifecycle';
 import { Animated } from "react-animated-css";
-import { Input, Dropdown } from 'semantic-ui-react'
+import { Segment, Form } from 'semantic-ui-react'
 //
 // const methods = {
 //   componentDidMount(props) {
@@ -16,9 +16,12 @@ const ShowNote = ({text, noteEdit, title, classroomNames, handleTitleChange, han
   return (
 
     <Animated animationIn="fadeIn" animationOut="flipOutY" isVisible={true}>
-      <label>Searchable drowdown</label> <br/>
-      <Dropdown style={{margin:'5%'}} placeholder='Select Classroom' scrolling search options={classroomNames} onChange={handleClassSelect} value={selectedClassroom.id}/><br/>
-      <Input placeholder='Note Title...' value={title} onChange={handleTitleChange}/>
+    <Segment inverted>
+    <Form.Group>
+      <Form.Dropdown placeholder='Select Classroom' label='Searchable Dropdown' scrolling search fluid options={classroomNames} onChange={handleClassSelect} value={selectedClassroom.id}/><br/>
+      <Form.Input placeholder='Note Title...' value={title} onChange={handleTitleChange}/>
+      </Form.Group>
+      </Segment>
       <ReactQuill id='quill' theme='snow' value={text} onChange={noteEdit} style={{height: '70vh'}}/>
     </Animated>
     );
