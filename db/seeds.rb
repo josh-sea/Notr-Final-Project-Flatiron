@@ -10,9 +10,9 @@
 User.create(username: 'tom')
 User.create(username: 'jerry')
 
-Classroom.create(name: 'Bio 101')
-Classroom.create(name: 'Math 101')
-Classroom.create(name: 'English 101')
+c1 = Classroom.create(name: 'Bio 101')
+c2 = Classroom.create(name: 'Math 101')
+c3 = Classroom.create(name: 'English 101')
 
 Note.create(title:"Test Note 1", content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus volutpat justo sed est tincidunt accumsan. Nam eget quam urna. Praesent lacinia odio metus, a venenatis orci porta sed. Mauris rutrum justo sit amet sem commodo faucibus. Suspendisse egestas eget est in posuere. Duis ac elit sed felis fringilla elementum. Ut a diam at arcu maximus iaculis. Nam placerat ante eu suscipit placerat. Vivamus cursus purus ipsum, ut facilisis lectus ullamcorper ac. Proin eget turpis non ligula placerat fringilla id a ante.
 

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       resources :users
       resources :classrooms
       resources :notes
+      post '/login', to: 'users#login'
     end
   end
 end
