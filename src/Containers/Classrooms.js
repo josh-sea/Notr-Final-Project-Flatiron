@@ -34,7 +34,7 @@ const Classrooms = ({notes, classrooms, click}) => {
   })
 
   return (
-    <Segment style={{height: '80vh', overflow: 'scroll', padding: '3px',margin: '2px'}}>
+    <Segment style={{height: '85vh', overflow: 'scroll', padding: '3px',margin: '2px'}}>
       <Accordion panels={uniqRootPanel} styled />
     </Segment>
   )

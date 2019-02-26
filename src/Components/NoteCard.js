@@ -10,6 +10,12 @@ const foundUser = users.find(user=>{
   return user.id === note.user_id
 })
 
+const handleTags = () => {
+  if (note.content.match(/<.*?>/i)){
+    return note.content.replace(/<.*?>/gi, ' ')
+  }
+}
+
 return (
 
   <Card>
@@ -26,7 +32,7 @@ return (
      header='Modal Header'
      fixedFooter
      trigger={<Button className='green'>View Note</Button>}>
-     <p onDragLeave={handleDragLeave} >{note.content}</p>
+     <p onDragLeave={handleDragLeave} >{handleTags()}</p>
      </Modal>
      </Card.Content>
    </Card>

@@ -8,7 +8,6 @@ const Classroom = ({notes, classroom, click}) => {
 
   return (
   <Accordion
-  style={{backgroundColor: '#333', height: 80vh}}
   defaultActiveIndex={0} panels={rootPanels}
   styled
   />

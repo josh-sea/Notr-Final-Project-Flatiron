@@ -6,6 +6,7 @@ import { Row, Col } from 'react-materialize';
 import LiveNotes from './Containers/LiveNotes';
 import Header from './Components/Header'
 import Login from './Components/Login'
+import { ActionCableConsumer } from 'react-actioncable-provider'
 
 
 class App extends Component {
@@ -31,6 +32,7 @@ class App extends Component {
       selectedClassroom: {},
       newClassRoomName: '',
       activeMenuLogIn: 'Sign In',
+      searchType: '',
     }
 
 //###################################################
@@ -55,6 +57,10 @@ class App extends Component {
         e.target.parentNode.parentNode.querySelector('.btn.waves-effect.waves-light.btn-flat.modal-action.modal-close').click()
       }
 
+
+      handleWikiLeave = (e) => {
+        document.querySelector('#note-header').click()
+      }
 //###################################################
 //controlling input to text editor
       noteEdit = (value) => {
@@ -74,28 +80,26 @@ class App extends Component {
           this.setState({currentClassroom},()=>{
             this.setState({text: this.state.currentNote.content, noteSize: 6, noteStatus: true, editView: true, newClassroomFormBool: false, title: this.state.currentNote.title, selectedClassroom: this.state.currentClassroom})
           })
-         // const reload = setInterval(this.reloadTimer, 500);
       })
     }
 //###################################################
 //interval for live note reload - polling instead of websocket
 
-       reloadTimer = () => {
-       fetch('http://localhost:9000/api/v1/users')
-       .then(r=>r.json())
-       .then(users=>this.setState({users}))
-
-       fetch('http://localhost:9000/api/v1/notes')
-       .then(r=>r.json())
-       .then(notes=>this.setState({notes}))
-
-       fetch('http://localhost:9000/api/v1/classrooms')
-       .then(r=>r.json())
-       .then(classrooms=>{
-         console.log('interval works');
-          this.setState({classrooms})
-        })
-      }
+      //  reloadTimer = () => {
+      //  fetch('http://localhost:9000/api/v1/users')
+      //  .then(r=>r.json())
+      //  .then(users=>this.setState({users}))
+      //
+      //  fetch('http://localhost:9000/api/v1/notes')
+      //  .then(r=>r.json())
+      //  .then(notes=>this.setState({notes}))
+      //
+      //  fetch('http://localhost:9000/api/v1/classrooms')
+      //  .then(r=>r.json())
+      //  .then(classrooms=>{
+      //     this.setState({classrooms})
+      //   })
+      // }
 
 //###################################################
 //handles clicks on the main menu
@@ -126,13 +130,14 @@ class App extends Component {
           classroomNames: [],
           selectedClassroom: {},
           activeMenuLogIn: 'Sign In',
+          newClassRoomName: '',
         },()=>{
           localStorage.removeItem('currentUserID', this.state.currentUser.id);
         })
 //##################################################################
 // handling saving functionality
         if (e.target.id === 'save' && !this.state.currentNote) {
-        fetch(`http://localhost:9000/api/v1/notes`, {
+        fetch('http://localhost:9000/api/v1/notes', {
         method: "POST",
         headers:
         {
@@ -146,12 +151,12 @@ class App extends Component {
           classroom_id: this.state.selectedClassroom.id
         })
       })
-      .then(r=>r.json())
-      .then(r=>{
-          this.setState(prevState=>{
-            return {notes: [...prevState.notes, r], userNotes: [...prevState.userNotes, r], currentNote: r}
-          })
-        })
+      // .then(r=>r.json())
+      // .then(r=>{
+      //     this.setState(prevState=>{
+      //       return {notes: [...prevState.notes, r], userNotes: [...prevState.userNotes, r], currentNote: r}
+      //     })
+      //   })
       } else {
         e.target.id === 'save' && this.state.currentNote.id>0 &&
         fetch(`http://localhost:9000/api/v1/notes/${this.state.currentNote.id}`, {
@@ -194,14 +199,14 @@ class App extends Component {
     .then(r=>r.json())
     .then(r=>{
       const allNoteIndex =  this.state.notes.indexOf(this.state.currentNote)
-      const userNoteIndex = this.state.userNotes.indexOf(this.state.currentNote)
-
+      const foundUserNote = this.state.userNotes.find(usernote=>{
+        return usernote.id === r.id
+      })
+      const userNoteIndex = this.state.userNotes.indexOf(foundUserNote)
       const newAllN = [...this.state.notes]
       newAllN.splice(allNoteIndex,1)
-
       const newUserN = [...this.state.userNotes]
       newUserN.splice(userNoteIndex,1)
-
         this.setState({
           notes: newAllN,
           userNotes: newUserN,
@@ -216,8 +221,6 @@ class App extends Component {
           title: '',
           selectedClassroom: {},
         })
-        console.log(this.state.classrooms);
-        console.log(this.state.userClassrooms);
       })
 //##################################################################
 // handling new classroom functionality
@@ -249,6 +252,17 @@ class App extends Component {
         .then(r=>{
           r.success &&
           this.setState({authenticated: r.success, currentUser: r.user, userClassrooms: r.classrooms, userNotes: r.notes},()=>{
+          fetch(`http://localhost:9000/api/v1/listener/`, {
+            method: 'POST',
+            headers:
+            {
+              "Content-Type": 'application/json',
+              "Accept": 'application/json'
+            },
+            body: JSON.stringify({
+              user_id: this.state.currentUser.id
+            })
+          })
             const classroomNames = this.state.userClassrooms.map(classroom=>{
               return { key: classroom.id, value: classroom.id, text: classroom.name }
             })
@@ -266,12 +280,23 @@ class App extends Component {
             },
             body: JSON.stringify({
               username: this.state.username
+            })
           })
-        })
           .then(r=>r.json())
           .then(r=>{
             r.success &&
             this.setState({authenticated: r.success, currentUser: r.user, userClassrooms: r.classrooms, userNotes: r.notes},()=>{
+            fetch(`http://localhost:9000/api/v1/listener/`, {
+              method: 'POST',
+              headers:
+              {
+                "Content-Type": 'application/json',
+                "Accept": 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: this.state.currentUser.id
+              })
+            })
               const classroomNames = this.state.userClassrooms.map(classroom=>{
                 return { key: classroom.id, value: classroom.id, text: classroom.name }
               })
@@ -382,27 +407,59 @@ class App extends Component {
 
 //####################################################
 //handle new note
-        handleTitleChange = e =>{
-          this.setState({title: e.target.value})
-        }
+  handleTitleChange = e =>{
+    this.setState({title: e.target.value})
+  }
 
-handleClassSelect = (e, {value})=>{
-  const selectedClassroom = this.state.classrooms.find(classroom=>{
-    return classroom.id === value
-  })
-  this.setState({selectedClassroom, noteSize: 6, noteStatus: true, editView: true, currentClassroom: selectedClassroom})
-}
+  handleClassSelect = (e, {value})=>{
+    const selectedClassroom = this.state.classrooms.find(classroom=>{
+      return classroom.id === value
+    })
+    this.setState({selectedClassroom, noteSize: 6, noteStatus: true, editView: true, currentClassroom: selectedClassroom})
+  }
 
 
   handleSignInMenuTab = (e, { name }) => {
     this.setState({ activeMenuLogIn: name })
   }
 
+//#######################################################
+//handle searching
+
+
+  handleSearchType = e => {
+    this.setState({searchType: e.target.value})
+  }
+
 //######################################################
+
+
+handleReceive = rec =>{
+
+  this.setState(prevState=>{
+    return {notes: [...prevState.notes, rec], userNotes: [...prevState.userNotes, rec], currentNote: rec}
+  })
+}
+
 
     render() {
       return (
         <div>
+        <ActionCableConsumer
+          channel={{channel: 'NewNoteChannel'}}
+          onReceived={(note)=>{
+            this.setState(prevState=>{
+              return {notes: [...prevState.notes, note], userNotes: [...prevState.userNotes, note], currentNote: note}
+            })
+          }}
+        >
+        </ActionCableConsumer>
+        <ActionCableConsumer
+          channel={{channel: 'UserListenerChannel'}}
+          onReceived={(userClassrooms)=>{
+          console.log('hey!')}}
+        >
+        </ActionCableConsumer>
           {
           !this.state.authenticated &&
             <Row>
@@ -414,11 +471,15 @@ handleClassSelect = (e, {value})=>{
           <Row style={{paddingLeft: '3%', paddingRight: '3%'}}>
             <Row>
               <Header
+              handleWikiLeave={this.handleWikiLeave}
+              handleSearchType={this.handleSearchType}
+              searchType={this.state.searchType}
               currentUserID={this.state.currentUserID}
               handleMenuClick={this.handleMenuClick} />
             </Row>
             <Row>
               <Col s={3} >
+
                 <Classrooms
                 click={this.handleClick}
                 classrooms={this.state.userClassrooms}
