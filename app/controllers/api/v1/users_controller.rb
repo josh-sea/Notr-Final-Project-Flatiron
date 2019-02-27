@@ -14,8 +14,27 @@ class Api::V1::UsersController < ApplicationController
   #   render json: {className: @class_name}
   # end
 
+  def listener
+    @user = User.find(params[:user_id])
+    classrooms = @user.classrooms
+    ActionCable.server.broadcast 'user_listener', classrooms
+    render json: @user, status: :ok
+  end
+
+
   def login
     @user = User.find_by(username: params[:username])
+    @notes = @user.notes
+    @classrooms = @user.classrooms.uniq
+    if @user
+      render json: {success: true, user: @user, notes: @notes, classrooms: @classrooms}, status: :ok
+    else
+      render json: {success: false, user: @user, notes: @notes, classrooms: @classrooms}, status: :unauthorized
+    end
+  end
+
+  def register
+    @user = User.create(user_params)
     @notes = @user.notes
     @classrooms = @user.classrooms.uniq
     if @user
@@ -57,7 +76,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:username)
+    params.require(:user).permit(:username, :user_id)
   end
 
 #################################################################################################
